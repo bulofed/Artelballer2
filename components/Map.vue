@@ -1,17 +1,15 @@
 <template>
-  <div :class="{'cursor-grabbing': mapStore.isDragging}" class="w-screen h-screen overflow-hidden relative cursor-grab flex justify-center align-center" @mousedown="startDrag" @mouseup="stopDrag">
+  <div class="w-screen h-screen overflow-hidden relative flex justify-center align-center" @mousedown="startDrag" @mouseup="stopDrag">
     <div id="map-container" class="absolute w-full h-full flex justify-center items-center" @mousedown="startDrag" @mouseup="stopDrag">
     </div>
-    <div v-if="selectedRegionName" class="absolute p-4 bg-red-500 shadow-md">
-      Name: {{ selectedRegionName }}
-    </div>
   </div>
+  <RegionInfo />
 </template>
 
 <script setup>
 import { useMapStore } from '@/store/map';
+import RegionInfo from './RegionInfo.vue';
 const mapStore = useMapStore();
-const selectedRegionName = ref('');
 let startGlobal = { x: 0, y: 0 };
 let svg, viewBox, point;
 let isDragging = false;
@@ -53,7 +51,6 @@ const selectRegion = (event) => {
       mapStore.setSelectedRegion(region);
       region.classList.add('selected-region');
       region.parentNode.appendChild(region);
-      selectedRegionName.value = region.getAttribute('data-name') || 'Unknown';
     }
   }
 };
@@ -74,6 +71,8 @@ onMounted(() => {
         region.classList.add("region");
         region.addEventListener('click', selectRegion);
       });
+      mapStore.offsetX = 400;
+      mapStore.offsetY = 25;
       mapStore.updateViewBox();
     })
     .catch(error => {
@@ -86,7 +85,6 @@ onMounted(() => {
 
 <style>
 .region {
-  cursor: pointer;
   fill: gray;
   stroke: #fff;
 }

@@ -4,6 +4,7 @@ const VIEWBOX_SIZE = 100;
 
 interface MapState {
   selectedRegion: SVGElement | null;
+  selectedRegionName: string | null;
   fillMode: boolean;
   currentScale: number;
   offsetX: number;
@@ -15,6 +16,7 @@ interface MapState {
 export const useMapStore = defineStore('map', {
   state: (): MapState => ({
     selectedRegion: null,
+    selectedRegionName: null,
     fillMode: false,
     currentScale: 1,
     offsetX: 0,
@@ -33,6 +35,7 @@ export const useMapStore = defineStore('map', {
     },
     setSelectedRegion(region: SVGElement | null) {
       this.selectedRegion = region;
+      this.selectedRegionName = region?.getAttribute('data-name') || null;
     },
     updateTransform(offsetX: number, offsetY: number, scale: number) {
       this.offsetX = offsetX;
@@ -65,6 +68,7 @@ export const useMapStore = defineStore('map', {
       this.zoom(1 / this.zoomFactor);
     },
     zoom(factor: number) {
+      if (this.currentScale * factor < 1 || this.currentScale * factor > 115) return
       const newScale = this.currentScale * factor;
       const newOffsetX = this.offsetX + (VIEWBOX_SIZE / this.currentScale - VIEWBOX_SIZE / newScale) / 2;
       const newOffsetY = this.offsetY + (VIEWBOX_SIZE / this.currentScale - VIEWBOX_SIZE / newScale) / 2;
