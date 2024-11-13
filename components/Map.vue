@@ -86,9 +86,9 @@ onMounted(() => {
 <style>
 .region {
   fill: gray;
-  stroke: #fff;
+  stroke: #F8F8F2;
 }
 .selected-region {
-  stroke: #333;
+  stroke: #44475A;
 }
 </style>

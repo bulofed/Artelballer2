@@ -1,5 +1,5 @@
 <template>
-  <div v-if="mapStore.selectedRegionName" class="font-serif bg-gray-800 text-lg text-white absolute right-0 bottom-0 flex justify-center px-2 min-w-64 rounded-tl-lg">
+  <div v-if="mapStore.selectedRegionName" class="font-serif bg-primary text-lg text-white absolute right-0 bottom-0 flex justify-center px-2 min-w-64 rounded-tl-lg">
     {{ mapStore.selectedRegionName }}
   </div>
 </template>
