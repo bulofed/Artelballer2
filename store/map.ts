@@ -1,6 +1,8 @@
 import { defineStore } from 'pinia';
 
 const VIEWBOX_SIZE = 100;
+const MIN_SCALE = 1;
+const MAX_SCALE = 115;
 
 interface MapState {
   selectedRegion: SVGElement | null;
@@ -9,7 +11,6 @@ interface MapState {
   currentScale: number;
   offsetX: number;
   offsetY: number;
-  isDragging: boolean;
   zoomFactor: number;
 }
 
@@ -21,32 +22,28 @@ export const useMapStore = defineStore('map', {
     currentScale: 1,
     offsetX: 0,
     offsetY: 0,
-    isDragging: false,
     zoomFactor: 1.2,
   }),
   getters: {
-    strokeWidth(state) {
+    strokeWidth(state): number {
       return 0.1 / state.currentScale;
     },
   },
   actions: {
-    toggleFillMode() {
+    toggleFillMode(): void {
       this.fillMode = !this.fillMode;
     },
-    setSelectedRegion(region: SVGElement | null) {
+    setSelectedRegion(region: SVGElement | null): void {
       this.selectedRegion = region;
       this.selectedRegionName = region?.getAttribute('data-name') || null;
     },
-    updateTransform(offsetX: number, offsetY: number, scale: number) {
+    updateTransform(offsetX: number, offsetY: number, scale: number): void {
       this.offsetX = offsetX;
       this.offsetY = offsetY;
       this.currentScale = scale;
       this.updateViewBox();
     },
-    setDragging(isDragging: boolean) {
-      this.isDragging = isDragging;
-    },
-    updateViewBox() {
+    updateViewBox(): void {
       const svgElement = document.getElementById('map-container')?.querySelector('svg');
       if (svgElement) {
         const newViewBox = `${this.offsetX} ${this.offsetY} ${VIEWBOX_SIZE / this.currentScale} ${VIEWBOX_SIZE / this.currentScale}`;
@@ -54,22 +51,22 @@ export const useMapStore = defineStore('map', {
         this.updateStrokeWidth();
       }
     },
-    updateStrokeWidth() {
+    updateStrokeWidth(): void {
       const regions = document.querySelectorAll("#map-container path:not(.sea)");
       const strokeWidth = `${this.strokeWidth}px`;
       regions.forEach(region => {
         (region as SVGElement).style.strokeWidth = strokeWidth;
       });
     },
-    zoomIn() {
+    zoomIn(): void {
       this.zoom(this.zoomFactor);
     },
-    zoomOut() {
+    zoomOut(): void {
       this.zoom(1 / this.zoomFactor);
     },
-    zoom(factor: number) {
-      if (this.currentScale * factor < 1 || this.currentScale * factor > 115) return
+    zoom(factor: number): void {
       const newScale = this.currentScale * factor;
+      if (newScale < MIN_SCALE || newScale > MAX_SCALE) return;
       const newOffsetX = this.offsetX + (VIEWBOX_SIZE / this.currentScale - VIEWBOX_SIZE / newScale) / 2;
       const newOffsetY = this.offsetY + (VIEWBOX_SIZE / this.currentScale - VIEWBOX_SIZE / newScale) / 2;
       this.updateTransform(newOffsetX, newOffsetY, newScale);

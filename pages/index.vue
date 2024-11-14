@@ -1,11 +1,41 @@
 <template>
   <div class="flex">
-    <Sidebar />
-    <Map />
+    <SideBar />
+    <MapView />
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup>
+import { useUserStore } from '@/store/user';
+
+const { status, data: session } = useAuth();
+const runtimeConfig = useRuntimeConfig();
+const userStore = useUserStore();
+
+onMounted(async () => {
+
+  if (status.value !== 'authenticated') {
+    return;
+  } 
+
+  if (!session.value) {
+    return;
+  }
+
+  const a = await fetch(`https://discordapp.com/api/users/@me/guilds/${runtimeConfig.public.discordGuildId}/member`, {
+    headers: {
+      Authorization: `Bearer ${session.value.accessToken}`
+    }
+  });
+
+  const roles = await a.json().then(data => data.roles);
+
+  if (roles.includes(runtimeConfig.public.discordRoleId)) {
+    userStore.addRole('player');
+  }
+})
+
+
 useHeadSafe({
   title: 'Artelballer 2',
   meta: [

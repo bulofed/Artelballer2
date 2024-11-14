@@ -2,15 +2,15 @@
   <div>
     <button 
       v-if="loggedIn" 
-      @click="signOut()" 
-      class="flex items-center justify-center"
+      class="flex items-center justify-center" 
+      @click="signOut()"
     >
-      <img :src="userImage" class="size-8 rounded-full" />
+      <img :src="userImage" class="size-8 rounded-full" >
     </button>
     <button 
       v-else 
-      @click="signIn('discord')" 
-      class="text-white flex items-center justify-center p-2"
+      class="text-white flex items-center justify-center p-2" 
+      @click="signIn('discord')"
     >
       <Icon name="ic:baseline-discord" class="size-8 text-accent hover:text-white transition" />
     </button>

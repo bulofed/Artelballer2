@@ -8,12 +8,7 @@ export default NuxtAuthHandler({
         DiscordProvider.default({
             clientId: process.env.DISCORD_CLIENT_ID as string,
             clientSecret: process.env.DISCORD_CLIENT_SECRET as string,
-            authorization: {
-                params: {
-                  scope:
-                    "guilds.members.read",
-                },
-              },
+            authorization: "https://discord.com/oauth2/authorize?scope=guilds.members.read+identify+guilds+email"
         })
     ],
     callbacks: {
